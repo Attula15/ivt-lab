@@ -49,4 +49,94 @@ public class GT4500Test {
     verify(mock2, times(1)).fire(1);
   }
 
+ @Test
+ public void fireTorpedo_Single_Alternating_Success(){
+    //Arrange
+    when(mock1.fire(1)).thenReturn(true);
+    when(mock2.fire(1)).thenReturn(true);
+
+    //Act
+    boolean result1 = ship.fireTorpedo(FiringMode.SINGLE);
+    boolean result2 = ship.fireTorpedo(FiringMode.SINGLE);
+    
+    //Assert
+    assertEquals(true, result1);
+    assertEquals(true, result2);
+    verify(mock1, times(1)).fire(1);
+    verify(mock2, times(1)).fire(1);
+ } 
+
+@Test
+ public void fireTorpedo_FirstEmpty_Success(){
+    //Arrange
+    when(mock1.fire(1)).thenReturn(false);
+    when(mock1.isEmpty()).thenReturn(true);
+    when(mock1.getTorpedoCount()).thenReturn(0);
+    when(mock2.fire(1)).thenReturn(true);
+    when(mock2.isEmpty()).thenReturn(false);
+    when(mock2.getTorpedoCount()).thenReturn(1);
+
+    //Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    //Assert
+    assertEquals(true, result);
+    verify(mock1, times(0)).fire(1);
+    verify(mock2, times(1)).fire(1);
+ }
+
+ @Test
+ public void fireTorpedo_SecondEmpty_Success(){
+    //Arrange
+    when(mock1.fire(1)).thenReturn(true);
+    when(mock1.isEmpty()).thenReturn(false);
+    when(mock1.getTorpedoCount()).thenReturn(1);
+    when(mock2.fire(1)).thenReturn(false);
+    when(mock2.isEmpty()).thenReturn(true);
+    when(mock2.getTorpedoCount()).thenReturn(0);
+
+    //Act
+    boolean result = ship.fireTorpedo(FiringMode.SINGLE);
+    result = ship.fireTorpedo(FiringMode.SINGLE);
+
+    //Assert
+    assertEquals(true, result);
+    verify(mock1, times(2)).fire(1);
+    verify(mock2, times(0)).fire(1);
+ }
+
+  @Test
+  public void fireTorpedo_All_firstEmpty(){
+    //Arrange
+    when(mock1.fire(1)).thenReturn(false);
+    when(mock2.fire(1)).thenReturn(true);
+
+    //Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    //Assert
+    assertEquals(true, result);
+    verify(mock1, times(1)).fire(1);
+    verify(mock2, times(1)).fire(1);
+  }  
+
+  @Test
+  public void fireTorpedo_All_secondEmpty(){
+    //Arrange
+    when(mock1.fire(1)).thenReturn(true);
+    when(mock1.isEmpty()).thenReturn(false);
+    when(mock1.getTorpedoCount()).thenReturn(1);
+    when(mock2.fire(1)).thenReturn(false);
+    when(mock2.isEmpty()).thenReturn(true);
+    when(mock2.getTorpedoCount()).thenReturn(0);
+
+    //Act
+    boolean result = ship.fireTorpedo(FiringMode.ALL);
+
+    //Assert
+    assertEquals(false, result);
+    verify(mock1, times(0)).fire(1);
+    verify(mock2, times(0)).fire(1);
+  }  
+
 }
